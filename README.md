@@ -1,0 +1,2 @@
+# MuteBot
+Mutes bad bois
