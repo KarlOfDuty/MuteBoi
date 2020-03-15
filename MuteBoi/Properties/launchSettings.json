@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MuteBoi": {
+      "commandName": "Project",
+      "workingDirectory": "$(ProjectDir)"
+    }
+  }
+}
