@@ -5,16 +5,19 @@ pipeline {
       parallel {
         stage('Linux') {
           steps {
-            sh 'msbuild MuteBoi/MuteBoi.csproj -restore -t:Publish -p:PublishProfile=Linux64.pubxml -p:OutputPath=bin/linux/ -p:BaseIntermediateOutputPath=obj/linux/ -p:TargetFramework=netcoreapp2.2 -p:SelfContained=true -p:RuntimeIdentifier=linux-x64 -p:Configuration=Release -p:DebugType=None'
+            sh 'msbuild MuteBoi/MuteBoi.csproj -restore -t:Publish -p:OutputPath=bin/linux/ -p:BaseIntermediateOutputPath=obj/linux/ -p:TargetFramework=netcoreapp3.0 -p:SelfContained=true -p:RuntimeIdentifier=linux-x64 -p:Configuration=Release -p:DebugType=None'
           }
         }
+
         stage('Windows') {
           steps {
-            sh 'msbuild MuteBoi/MuteBoi.csproj -restore -t:Publish -p:PublishProfile=Windows64.pubxml -p:OutputPath=bin/win/ -p:BaseIntermediateOutputPath=obj/win/ -p:TargetFramework=netcoreapp2.2 -p:SelfContained=true -p:RuntimeIdentifier=win-x64 -p:Configuration=Release -p:DebugType=None'
+            sh 'msbuild MuteBoi/MuteBoi.csproj -restore -t:Publish -p:OutputPath=bin/win/ -p:BaseIntermediateOutputPath=obj/win/ -p:TargetFramework=netcoreapp3.0 -p:SelfContained=true -p:RuntimeIdentifier=win-x64 -p:Configuration=Release -p:DebugType=None'
           }
         }
+
       }
     }
+
     stage('Package') {
       parallel {
         stage('Linux') {
@@ -26,6 +29,7 @@ pipeline {
 
           }
         }
+
         stage('Windows') {
           steps {
             sh 'mkdir Windows-x64'
@@ -35,8 +39,10 @@ pipeline {
 
           }
         }
+
       }
     }
+
     stage('Archive') {
       parallel {
         stage('Linux') {
@@ -44,12 +50,15 @@ pipeline {
             archiveArtifacts(artifacts: 'Linux-x64/MuteBoi', caseSensitive: true)
           }
         }
+
         stage('Windows') {
           steps {
             archiveArtifacts(artifacts: 'Windows-x64/MuteBoi.exe', caseSensitive: true)
           }
         }
+
       }
     }
+
   }
 }
