@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <Authors>KarlofDuty</Authors>
     <Company>KarlofDuty</Company>
     <Description>A Discord bot made to stop users from simply rejoining a server when they get given a muted role.</Description>

@@ -40,7 +40,7 @@ namespace MuteBoi
 		{
 			using (MySqlConnection c = GetConnection())
 			{
-				using MySqlCommand createTable = new MySqlCommand(
+				MySqlCommand createTable = new MySqlCommand(
 					"CREATE TABLE IF NOT EXISTS tracked_roles(" +
 					"user_id BIGINT UNSIGNED NOT NULL," +
 					"role_id BIGINT UNSIGNED NOT NULL," +
@@ -54,54 +54,59 @@ namespace MuteBoi
 
 		public static bool TryAddRole(ulong userID, ulong roleID)
 		{
-			using MySqlConnection c = GetConnection();
-			c.Open();
+			using (MySqlConnection c = GetConnection())
+			{
+				c.Open();
 
-			using MySqlCommand cmd = new MySqlCommand(
-				@"INSERT INTO tracked_roles (user_id, role_id, time) VALUES (@user_id, @role_id, now());",
-				c);
-			cmd.Parameters.AddWithValue("@user_id", userID);
-			cmd.Parameters.AddWithValue("@role_id", roleID);
-			cmd.Prepare();
+				MySqlCommand cmd = new MySqlCommand(@"INSERT INTO tracked_roles (user_id, role_id, time) VALUES (@user_id, @role_id, now());", c);
+				cmd.Parameters.AddWithValue("@user_id", userID);
+				cmd.Parameters.AddWithValue("@role_id", roleID);
+				cmd.Prepare();
 
-			return cmd.ExecuteNonQuery() > 0;
+				return cmd.ExecuteNonQuery() > 0;
+			}
+
 		}
 
 		public static bool TryGetRoles(ulong userID, out List<SavedRole> roles)
 		{
 			roles = null;
-			using MySqlConnection c = GetConnection();
-			c.Open();
-
-			using MySqlCommand selection = new MySqlCommand(@"SELECT * FROM tracked_roles WHERE user_id=@user_id", c);
-			selection.Parameters.AddWithValue("@user_id", userID);
-			selection.Prepare();
-			MySqlDataReader results = selection.ExecuteReader();
-
-			if (!results.Read())
+			using (MySqlConnection c = GetConnection())
 			{
-				return false;
-			}
+				c.Open();
 
-			roles = new List<SavedRole> { new SavedRole(results) };
-			while (results.Read())
-			{
-				roles.Add(new SavedRole(results));
+				MySqlCommand selection = new MySqlCommand(@"SELECT * FROM tracked_roles WHERE user_id=@user_id", c);
+				selection.Parameters.AddWithValue("@user_id", userID);
+				selection.Prepare();
+				MySqlDataReader results = selection.ExecuteReader();
+
+				if (!results.Read())
+				{
+					return false;
+				}
+
+				roles = new List<SavedRole> { new SavedRole(results) };
+				while (results.Read())
+				{
+					roles.Add(new SavedRole(results));
+				}
+				results.Close();
+				return true;
 			}
-			results.Close();
-			return true;
 		}
 
 		public static bool TryRemoveRoles(ulong userID)
 		{
-			using MySqlConnection c = GetConnection();
-			c.Open();
+			using (MySqlConnection c = GetConnection())
+			{
+				c.Open();
 
-			using MySqlCommand deletion = new MySqlCommand(@"DELETE FROM tracked_roles WHERE user_id=@user_id", c);
-			deletion.Parameters.AddWithValue("@user_id", userID);
-			deletion.Prepare();
+				MySqlCommand deletion = new MySqlCommand(@"DELETE FROM tracked_roles WHERE user_id=@user_id", c);
+				deletion.Parameters.AddWithValue("@user_id", userID);
+				deletion.Prepare();
 
-			return deletion.ExecuteNonQuery() > 0;
+				return deletion.ExecuteNonQuery() > 0;
+			}
 		}
 	}
 }
