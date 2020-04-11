@@ -5,13 +5,13 @@ pipeline {
       parallel {
         stage('Linux') {
           steps {
-            sh 'msbuild MuteBoi/MuteBoi.csproj -restore -t:Publish -p:OutputPath=bin/linux/ -p:BaseIntermediateOutputPath=obj/linux/ -p:TargetFramework=netcoreapp2.2 -p:SelfContained=true -p:RuntimeIdentifier=linux-x64 -p:Configuration=Release -p:DebugType=None'
+            sh 'msbuild MuteBoi.csproj -restore -t:Publish -p:OutputPath=bin/linux/ -p:BaseIntermediateOutputPath=obj/linux/ -p:TargetFramework=netcoreapp2.2 -p:SelfContained=true -p:RuntimeIdentifier=linux-x64 -p:Configuration=Release -p:DebugType=None'
           }
         }
 
         stage('Windows') {
           steps {
-            sh 'msbuild MuteBoi/MuteBoi.csproj -restore -t:Publish -p:OutputPath=bin/win/ -p:BaseIntermediateOutputPath=obj/win/ -p:TargetFramework=netcoreapp2.2 -p:SelfContained=true -p:RuntimeIdentifier=win-x64 -p:Configuration=Release -p:DebugType=None'
+            sh 'msbuild MuteBoi.csproj -restore -t:Publish -p:OutputPath=bin/win/ -p:BaseIntermediateOutputPath=obj/win/ -p:TargetFramework=netcoreapp2.2 -p:SelfContained=true -p:RuntimeIdentifier=win-x64 -p:Configuration=Release -p:DebugType=None'
           }
         }
 
