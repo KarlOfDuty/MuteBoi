@@ -23,6 +23,7 @@ pipeline {
         stage('Linux') {
           steps {
             sh 'ls -lh'
+            sh 'pwd'
             sh 'mkdir Linux-x64'
             dir(path: './Linux-x64') {
               sh 'warp-packer --arch linux-x64 --input_dir ../bin/linux/publish --exec MuteBoi --output MuteBoi'
