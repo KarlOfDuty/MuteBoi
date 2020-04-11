@@ -350,5 +350,3 @@ MigrationBackup/
 .ionide/
 
 MuteBoi/config.yml
-
-GlobalSuppressions.cs
