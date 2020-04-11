@@ -5,13 +5,13 @@ pipeline {
       parallel {
         stage('Linux') {
           steps {
-            sh 'msbuild MuteBoi/MuteBoi.csproj -restore -t:Publish -p:OutputPath=bin/linux/ -p:BaseIntermediateOutputPath=obj/linux/ -p:TargetFramework=netcoreapp3.0 -p:SelfContained=true -p:RuntimeIdentifier=linux-x64 -p:Configuration=Release -p:DebugType=None'
+            sh 'msbuild MuteBoi/MuteBoi.csproj -restore -t:Publish -p:OutputPath=bin/linux/ -p:BaseIntermediateOutputPath=obj/linux/ -p:TargetFramework=netcoreapp2.2 -p:SelfContained=true -p:RuntimeIdentifier=linux-x64 -p:Configuration=Release -p:DebugType=None'
           }
         }
 
         stage('Windows') {
           steps {
-            sh 'msbuild MuteBoi/MuteBoi.csproj -restore -t:Publish -p:OutputPath=bin/win/ -p:BaseIntermediateOutputPath=obj/win/ -p:TargetFramework=netcoreapp3.0 -p:SelfContained=true -p:RuntimeIdentifier=win-x64 -p:Configuration=Release -p:DebugType=None'
+            sh 'msbuild MuteBoi/MuteBoi.csproj -restore -t:Publish -p:OutputPath=bin/win/ -p:BaseIntermediateOutputPath=obj/win/ -p:TargetFramework=netcoreapp2.2 -p:SelfContained=true -p:RuntimeIdentifier=win-x64 -p:Configuration=Release -p:DebugType=None'
           }
         }
 
@@ -24,7 +24,7 @@ pipeline {
           steps {
             sh 'mkdir Linux-x64'
             dir(path: './Linux-x64') {
-              sh 'warp-packer --arch linux-x64 --input_dir ../MuteBoi/bin/linux/publish --exec MuteBoi --output MuteBoi'
+              sh 'warp-packer --arch linux-x64 --input_dir bin/linux/publish --exec MuteBoi --output MuteBoi'
             }
 
           }
@@ -34,7 +34,7 @@ pipeline {
           steps {
             sh 'mkdir Windows-x64'
             dir(path: './Windows-x64') {
-              sh 'warp-packer --arch windows-x64 --input_dir ../MuteBoi/bin/win/publish --exec MuteBoi.exe --output MuteBoi.exe'
+              sh 'warp-packer --arch windows-x64 --input_dir bin/win/publish --exec MuteBoi.exe --output MuteBoi.exe'
             }
 
           }
