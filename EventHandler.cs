@@ -27,37 +27,37 @@ namespace MuteBoi
 
 		private Task OnReady(ReadyEventArgs e)
 		{
-			this.discordClient.DebugLogger.LogMessage(LogLevel.Info, "MuteBoi", "Client is ready to process events.", DateTime.UtcNow);
+			this.discordClient.DebugLogger.LogMessage(LogLevel.Info, Config.APPLICATION_NAME, "Client is ready to process events.", DateTime.UtcNow);
 			this.discordClient.UpdateStatusAsync(new DiscordGame("memory games"), UserStatus.Online);
 			return Task.CompletedTask;
 		}
 
 		private Task OnGuildAvailable(GuildCreateEventArgs e)
 		{
-			this.discordClient.DebugLogger.LogMessage(LogLevel.Info, "MuteBoi", $"Guild available: {e.Guild.Name}", DateTime.UtcNow);
+			this.discordClient.DebugLogger.LogMessage(LogLevel.Info, Config.APPLICATION_NAME, $"Guild available: {e.Guild.Name}", DateTime.UtcNow);
 
 			IReadOnlyList<DiscordRole> roles = e.Guild.Roles;
 
 			foreach (DiscordRole role in roles)
 			{
-				this.discordClient.DebugLogger.LogMessage(LogLevel.Info, "MuteBoi", role.Name.PadRight(40, '.') + role.Id, DateTime.UtcNow);
+				this.discordClient.DebugLogger.LogMessage(LogLevel.Info, Config.APPLICATION_NAME, role.Name.PadRight(40, '.') + role.Id, DateTime.UtcNow);
 			}
 			return Task.CompletedTask;
 		}
 
 		private Task OnClientError(ClientErrorEventArgs e)
 		{
-			this.discordClient.DebugLogger.LogMessage(LogLevel.Error, "MuteBoi", $"Exception occured: {e.Exception.GetType()}: {e.Exception}", DateTime.UtcNow);
+			this.discordClient.DebugLogger.LogMessage(LogLevel.Error, Config.APPLICATION_NAME, $"Exception occured: {e.Exception.GetType()}: {e.Exception}", DateTime.UtcNow);
 			return Task.CompletedTask;
 		}
 
 		private Task OnGuildMemberRemoved(GuildMemberRemoveEventArgs e)
 		{
-			Console.Write("LEAVE" + e.Member.Roles.Count());
 			foreach (DiscordRole role in e.Member.Roles)
 			{
 				if (Config.trackedRoles.Contains(role.Id))
 				{
+					this.discordClient.DebugLogger.LogMessage(LogLevel.Info, Config.APPLICATION_NAME, e.Member.DisplayName + " (" + e.Member.Id + ") left the server with tracked role '" + role.Name + "'.", DateTime.UtcNow);
 					Database.TryAddRole(e.Member.Id, role.Id);
 				}
 			}
@@ -66,14 +66,15 @@ namespace MuteBoi
 
 		private async Task OnGuildMemberAdded(GuildMemberAddEventArgs e)
 		{
-			Console.Write("JOIN");
 			if (!Database.TryGetRoles(e.Member.Id, out List<Database.SavedRole> savedRoles)) return;
 
 			foreach (Database.SavedRole savedRole in savedRoles)
 			{
 				try
 				{
+					
 					DiscordRole role = e.Guild.GetRole(savedRole.roleID);
+					this.discordClient.DebugLogger.LogMessage(LogLevel.Info, Config.APPLICATION_NAME, e.Member.DisplayName + " (" + e.Member.Id + ") were given back the role '" + role.Name + "' on rejoin. ", DateTime.UtcNow);
 					await e.Member.GrantRoleAsync(role);
 				}
 				catch (NotFoundException) {}

@@ -9,6 +9,8 @@ namespace MuteBoi
 {
 	internal static class Config
 	{
+		internal const string APPLICATION_NAME = "MuteBoi";
+
 		internal static string token = "";
 		internal static string logLevel = "Info";
 
