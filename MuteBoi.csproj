@@ -6,6 +6,7 @@
     <Authors>KarlofDuty</Authors>
     <Company>KarlofDuty</Company>
     <Description>A Discord bot made to stop users from simply rejoining a server when they get given a muted role.</Description>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -35,5 +36,4 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-
 </Project>
