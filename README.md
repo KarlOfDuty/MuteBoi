@@ -1,2 +1,2 @@
-# MuteBoi
+# MuteBoi [![Build Status](http://95.217.45.17:8080/job/MuteBoi/job/master/badge/icon)](http://95.217.45.17:8080/blue/organizations/jenkins/MuteBoi/activity) [![Release](https://img.shields.io/github/release/KarlofDuty/MuteBoi.svg)](https://github.com/KarlOfDuty/MuteBoi/releases) [![Discord Server](https://img.shields.io/discord/430468637183442945.svg?label=discord)](https://discord.gg/C5qMvkj)
 Retains specific Discord roles if users leave the server. Useful for muted roles or other permission negating roles.
