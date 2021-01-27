@@ -5,9 +5,9 @@ Retains specific Discord roles if users leave the server. Useful for muted roles
 
 1. [Create a new bot application](https://discordpy.readthedocs.io/en/latest/discord.html).
 
-2. Download the bot for your operating system, either a [release version](https://github.com/KarlOfDuty/MuteBoi/releases) or a [dev build](http://95.217.45.17:8080/blue/organizations/jenkins/MuteBoi/activity). The bot should include dotnet but if your bot doesnt work and this seems to be the issue please tell me.
+2. Download the bot executable for your operating system, either a [release version](https://github.com/KarlOfDuty/MuteBoi/releases) or a [dev build](http://95.217.45.17:8080/blue/organizations/jenkins/MuteBoi/activity). The bot should include dotnet but if your bot doesnt work and this seems to be the issue please tell me.
 
-3. Run the bot once.
+3. Run the bot executable once to generate the config.
 
 4. Set up the config (`config.yml`) to your specifications, there are instructions inside and also further down on this page. If you need more help either contact me in Discord or through an issue here.
 
