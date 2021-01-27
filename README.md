@@ -1,6 +1,16 @@
 # MuteBoi [![Build Status](http://95.217.45.17:8080/job/MuteBoi/job/master/badge/icon)](http://95.217.45.17:8080/blue/organizations/jenkins/MuteBoi/activity) [![Release](https://img.shields.io/github/release/KarlofDuty/MuteBoi.svg)](https://github.com/KarlOfDuty/MuteBoi/releases) [![Discord Server](https://img.shields.io/discord/430468637183442945.svg?label=discord)](https://discord.gg/C5qMvkj)
 Retains specific Discord roles if users leave the server. Useful for muted roles or other permission negating roles. Leaving members are saved in a mysql database with all tracked roles they had when they left.
 
+## Setup
+
+1. [Create a new bot application](https://discordpy.readthedocs.io/en/latest/discord.html).
+
+2. Download the bot for your operating system, either a [release version](https://github.com/KarlOfDuty/MuteBoi/releases) or a [dev build](http://95.217.45.17:8080/blue/organizations/jenkins/MuteBoi/activity). The bot should include dotnet but if your bot doesnt work and this seems to be the issue please tell me.
+
+3. Run the bot once.
+
+4. Set up the config (`config.yml`) to your specifications, there are instructions inside and also further down on this page. If you need more help either contact me in Discord or through an issue here.
+
 ### Config:
 
 ```yaml
