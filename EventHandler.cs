@@ -27,7 +27,7 @@ namespace MuteBoi
 			return Task.CompletedTask;
 		}
 
-		public static Task OnGuildAvailable(DiscordClient client, GuildCreateEventArgs e)
+		public static Task OnGuildAvailable(DiscordClient _, GuildCreateEventArgs e)
 		{
 			Logger.Log(LogID.DISCORD, "Guild available: " + e.Guild.Name);
 
@@ -40,13 +40,13 @@ namespace MuteBoi
 			return Task.CompletedTask;
 		}
 
-		public static Task OnClientError(DiscordClient client, ClientErrorEventArgs e)
+		public static Task OnClientError(DiscordClient _, ClientErrorEventArgs e)
 		{
 			Logger.Error(LogID.DISCORD, "Exception occured:\n" + e.Exception);
 			return Task.CompletedTask;
 		}
 
-		public static Task OnGuildMemberRemoved(DiscordClient client, GuildMemberRemoveEventArgs e)
+		public static Task OnGuildMemberRemoved(DiscordClient _, GuildMemberRemoveEventArgs e)
 		{
 			foreach (DiscordRole role in e.Member.Roles)
 			{
@@ -59,7 +59,7 @@ namespace MuteBoi
 			return Task.CompletedTask;
 		}
 
-		public static async Task OnGuildMemberAdded(DiscordClient client, GuildMemberAddEventArgs e)
+		public static async Task OnGuildMemberAdded(DiscordClient _, GuildMemberAddEventArgs e)
 		{
 			if (!Database.TryGetRoles(e.Member.Id, out List<Database.SavedRole> savedRoles)) return;
 

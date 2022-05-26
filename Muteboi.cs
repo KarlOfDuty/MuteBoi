@@ -12,7 +12,7 @@ namespace MuteBoi
 		// Sets up a dummy client to use for logging
 		public static DiscordClient discordClient = new DiscordClient(new DiscordConfiguration { Token = "DUMMY_TOKEN", TokenType = TokenType.Bot, MinimumLogLevel = LogLevel.Debug });
 
-		static void Main(string[] args)
+		static void Main(string[] _)
 		{
 			MainAsync().GetAwaiter().GetResult();
 		}
@@ -35,43 +35,42 @@ namespace MuteBoi
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine("Fatal error:");
-				Console.WriteLine(e);
+				Logger.Fatal(LogID.GENERAL,"Fatal error:\n" + e);
 				Console.ReadLine();
 			}
 		}
 
 		public static async void Initialize()
 		{
-			Console.WriteLine("Loading config \"" + Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "config.yml\"");
+			Logger.Log(LogID.GENERAL,"Loading config \"" + Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "config.yml\"");
 			Config.LoadConfig();
 
 			// Check if token is unset
 			if (Config.token == "<add-token-here>" || string.IsNullOrWhiteSpace(Config.token))
 			{
-				Console.WriteLine("You need to set your bot token in the config and start the bot again.");
+				Logger.Fatal(LogID.GENERAL,"You need to set your bot token in the config and start the bot again.");
 				throw new ArgumentException("Invalid Discord bot token");
 			}
 
 			// Database connection and setup
 			try
 			{
-				Console.WriteLine("Connecting to database...");
+				Logger.Log(LogID.GENERAL,"Connecting to database...");
 				Database.SetConnectionString(Config.hostName, Config.port, Config.database, Config.username, Config.password);
 				Database.SetupTables();
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine("Could not set up database tables, please confirm connection settings, status of the server and permissions of MySQL user. Error: " + e);
+				Logger.Fatal(LogID.GENERAL,"Could not set up database tables, please confirm connection settings, status of the server and permissions of MySQL user. Error: " + e);
 				throw;
 			}
 
-			Console.WriteLine("Setting up Discord client...");
+			Logger.Log(LogID.GENERAL,"Setting up Discord client...");
 
 			// Checking log level
 			if (!Enum.TryParse(Config.logLevel, true, out LogLevel logLevel))
 			{
-				Console.WriteLine("Log level " + Config.logLevel + " invalid, using 'Info' instead.");
+				Logger.Warn(LogID.GENERAL,"Log level " + Config.logLevel + " invalid, using 'Info' instead.");
 				logLevel = LogLevel.Information;
 			}
 
@@ -87,14 +86,14 @@ namespace MuteBoi
 
 			discordClient = new DiscordClient(cfg);
 
-			Console.WriteLine("Hooking events...");
+			Logger.Log(LogID.GENERAL,"Hooking events...");
 			discordClient.Ready += EventHandler.OnReady;
 			discordClient.GuildAvailable += EventHandler.OnGuildAvailable;
 			discordClient.ClientErrored += EventHandler.OnClientError;
 			discordClient.GuildMemberAdded += EventHandler.OnGuildMemberAdded;
 			discordClient.GuildMemberRemoved += EventHandler.OnGuildMemberRemoved;
 
-			Console.WriteLine("Connecting to Discord...");
+			Logger.Log(LogID.GENERAL, "Connecting to Discord...");
 			await discordClient.ConnectAsync();
 		}
 	}
