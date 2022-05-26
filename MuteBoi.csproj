@@ -2,11 +2,17 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <Authors>KarlofDuty</Authors>
     <Company>KarlofDuty</Company>
     <Description>A Discord bot made to stop users from simply rejoining a server when they get given a muted role.</Description>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <PackageVersion>1.0.0-A</PackageVersion>
+    <Title>MuteBoi</Title>
+    <PackageLicenseUrl>https://github.com/KarlOfDuty/MuteBoi/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/KarlOfDuty/MuteBoi</RepositoryUrl>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <FileVersion>1.0.0.1</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -14,12 +20,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DSharpPlus" Version="3.2.3" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.3" />
-    <PackageReference Include="MySql.Data" Version="8.0.19" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="Stylet" Version="1.3.1" />
-    <PackageReference Include="YamlDotNet" Version="8.1.0" />
+    <PackageReference Include="DSharpPlus" Version="4.2.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="MySql.Data" Version="8.0.29" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="YamlDotNet" Version="11.2.1" />
   </ItemGroup>
 
   <ItemGroup>

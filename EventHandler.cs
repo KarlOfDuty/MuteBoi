@@ -10,61 +10,56 @@ using DSharpPlus.Exceptions;
 
 namespace MuteBoi
 {
-	class EventHandler
+	static class EventHandler
 	{
-		private DiscordClient discordClient;
-		internal EventHandler(DiscordClient client)
+		public static Task OnReady(DiscordClient client, ReadyEventArgs e)
 		{
-			this.discordClient = client;
-			
-			
-			this.discordClient.Ready += this.OnReady;
-			this.discordClient.GuildAvailable += this.OnGuildAvailable;
-			this.discordClient.ClientErrored += this.OnClientError;
-			this.discordClient.GuildMemberRemoved += this.OnGuildMemberRemoved;
-			this.discordClient.GuildMemberAdded += this.OnGuildMemberAdded;
-		}
+			Logger.Log(LogID.DISCORD, "Client is ready to process events.");
 
-		private Task OnReady(ReadyEventArgs e)
-		{
-			this.discordClient.DebugLogger.LogMessage(LogLevel.Info, Config.APPLICATION_NAME, "Client is ready to process events.", DateTime.UtcNow);
-			this.discordClient.UpdateStatusAsync(new DiscordGame("memory games"), UserStatus.Online);
+			// Checking activity type
+			if (!Enum.TryParse(Config.presenceType, true, out ActivityType activityType))
+			{
+				Console.WriteLine("Presence type '" + Config.presenceType + "' invalid, using 'Playing' instead.");
+				activityType = ActivityType.Playing;
+			}
+
+			client.UpdateStatusAsync(new DiscordActivity(Config.presenceText, activityType), UserStatus.Online);
 			return Task.CompletedTask;
 		}
 
-		private Task OnGuildAvailable(GuildCreateEventArgs e)
+		public static Task OnGuildAvailable(DiscordClient client, GuildCreateEventArgs e)
 		{
-			this.discordClient.DebugLogger.LogMessage(LogLevel.Info, Config.APPLICATION_NAME, $"Guild available: {e.Guild.Name}", DateTime.UtcNow);
+			Logger.Log(LogID.DISCORD, "Guild available: " + e.Guild.Name);
 
-			IReadOnlyList<DiscordRole> roles = e.Guild.Roles;
+			IReadOnlyDictionary<ulong, DiscordRole> roles = e.Guild.Roles;
 
-			foreach (DiscordRole role in roles)
+			foreach ((ulong roleID, DiscordRole role) in roles)
 			{
-				this.discordClient.DebugLogger.LogMessage(LogLevel.Info, Config.APPLICATION_NAME, role.Name.PadRight(40, '.') + role.Id, DateTime.UtcNow);
+				Logger.Log(LogID.DISCORD, role.Name.PadRight(40, '.') + roleID);
 			}
 			return Task.CompletedTask;
 		}
 
-		private Task OnClientError(ClientErrorEventArgs e)
+		public static Task OnClientError(DiscordClient client, ClientErrorEventArgs e)
 		{
-			this.discordClient.DebugLogger.LogMessage(LogLevel.Error, Config.APPLICATION_NAME, $"Exception occured: {e.Exception.GetType()}: {e.Exception}", DateTime.UtcNow);
+			Logger.Error(LogID.DISCORD, "Exception occured:\n" + e.Exception);
 			return Task.CompletedTask;
 		}
 
-		private Task OnGuildMemberRemoved(GuildMemberRemoveEventArgs e)
+		public static Task OnGuildMemberRemoved(DiscordClient client, GuildMemberRemoveEventArgs e)
 		{
 			foreach (DiscordRole role in e.Member.Roles)
 			{
 				if (Config.trackedRoles.Contains(role.Id))
 				{
-					this.discordClient.DebugLogger.LogMessage(LogLevel.Info, Config.APPLICATION_NAME, e.Member.DisplayName + " (" + e.Member.Id + ") left the server with tracked role '" + role.Name + "'.", DateTime.UtcNow);
+					Logger.Log(LogID.DISCORD, e.Member.DisplayName + " (" + e.Member.Id + ") left the server with tracked role '" + role.Name + "'.");
 					Database.TryAddRole(e.Member.Id, role.Id);
 				}
 			}
 			return Task.CompletedTask;
 		}
 
-		private async Task OnGuildMemberAdded(GuildMemberAddEventArgs e)
+		public static async Task OnGuildMemberAdded(DiscordClient client, GuildMemberAddEventArgs e)
 		{
 			if (!Database.TryGetRoles(e.Member.Id, out List<Database.SavedRole> savedRoles)) return;
 
@@ -74,7 +69,7 @@ namespace MuteBoi
 				{
 					
 					DiscordRole role = e.Guild.GetRole(savedRole.roleID);
-					this.discordClient.DebugLogger.LogMessage(LogLevel.Info, Config.APPLICATION_NAME, e.Member.DisplayName + " (" + e.Member.Id + ") were given back the role '" + role.Name + "' on rejoin. ", DateTime.UtcNow);
+					Logger.Log(LogID.DISCORD, e.Member.DisplayName + " (" + e.Member.Id + ") were given back the role '" + role.Name + "' on rejoin. ");
 					await e.Member.GrantRoleAsync(role);
 				}
 				catch (NotFoundException) {}

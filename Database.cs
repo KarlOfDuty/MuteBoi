@@ -38,61 +38,55 @@ namespace MuteBoi
 
 		public static void SetupTables()
 		{
-			using (MySqlConnection c = GetConnection())
-			{
-				MySqlCommand createTable = new MySqlCommand(
-					"CREATE TABLE IF NOT EXISTS tracked_roles(" +
-					"user_id BIGINT UNSIGNED NOT NULL," +
-					"role_id BIGINT UNSIGNED NOT NULL," +
-					"time DATETIME NOT NULL," +
-					"INDEX(user_id, time))",
-					c);
-				c.Open();
-				createTable.ExecuteNonQuery();
-			}
+			using MySqlConnection c = GetConnection();
+
+			c.Open();
+			using MySqlCommand createTable = new MySqlCommand(
+                "CREATE TABLE IF NOT EXISTS tracked_roles(" +
+                "user_id BIGINT UNSIGNED NOT NULL," +
+                "role_id BIGINT UNSIGNED NOT NULL," +
+                "time DATETIME NOT NULL," +
+                "INDEX(user_id, time))",
+                c);
+			createTable.ExecuteNonQuery();
 		}
 
 		public static bool TryAddRole(ulong userID, ulong roleID)
 		{
-			using (MySqlConnection c = GetConnection())
-			{
-				c.Open();
+			using MySqlConnection c = GetConnection();
+			c.Open();
 
-				MySqlCommand cmd = new MySqlCommand(@"INSERT INTO tracked_roles (user_id, role_id, time) VALUES (@user_id, @role_id, now());", c);
-				cmd.Parameters.AddWithValue("@user_id", userID);
-				cmd.Parameters.AddWithValue("@role_id", roleID);
-				cmd.Prepare();
+			using MySqlCommand cmd = new MySqlCommand(@"INSERT INTO tracked_roles (user_id, role_id, time) VALUES (@user_id, @role_id, now());", c);
+			cmd.Parameters.AddWithValue("@user_id", userID);
+			cmd.Parameters.AddWithValue("@role_id", roleID);
+			cmd.Prepare();
 
-				return cmd.ExecuteNonQuery() > 0;
-			}
-
+			return cmd.ExecuteNonQuery() > 0;
 		}
 
 		public static bool TryGetRoles(ulong userID, out List<SavedRole> roles)
 		{
 			roles = null;
-			using (MySqlConnection c = GetConnection())
+			using MySqlConnection c = GetConnection();
+			c.Open();
+
+			using MySqlCommand selection = new MySqlCommand(@"SELECT * FROM tracked_roles WHERE user_id=@user_id", c);
+			selection.Parameters.AddWithValue("@user_id", userID);
+			selection.Prepare();
+			MySqlDataReader results = selection.ExecuteReader();
+
+			if (!results.Read())
 			{
-				c.Open();
-
-				MySqlCommand selection = new MySqlCommand(@"SELECT * FROM tracked_roles WHERE user_id=@user_id", c);
-				selection.Parameters.AddWithValue("@user_id", userID);
-				selection.Prepare();
-				MySqlDataReader results = selection.ExecuteReader();
-
-				if (!results.Read())
-				{
-					return false;
-				}
-
-				roles = new List<SavedRole> { new SavedRole(results) };
-				while (results.Read())
-				{
-					roles.Add(new SavedRole(results));
-				}
-				results.Close();
-				return true;
+				return false;
 			}
+
+			roles = new List<SavedRole> { new SavedRole(results) };
+			while (results.Read())
+			{
+				roles.Add(new SavedRole(results));
+			}
+			results.Close();
+			return true;
 		}
 
 		public static bool TryRemoveRoles(ulong userID)
@@ -101,7 +95,7 @@ namespace MuteBoi
 			{
 				c.Open();
 
-				MySqlCommand deletion = new MySqlCommand(@"DELETE FROM tracked_roles WHERE user_id=@user_id", c);
+				using MySqlCommand deletion = new MySqlCommand(@"DELETE FROM tracked_roles WHERE user_id=@user_id", c);
 				deletion.Parameters.AddWithValue("@user_id", userID);
 				deletion.Prepare();
 

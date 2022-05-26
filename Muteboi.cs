@@ -3,18 +3,18 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using DSharpPlus;
+using Microsoft.Extensions.Logging;
 
 namespace MuteBoi
 {
-	class MuteBoi
+	static class MuteBoi
 	{
-		internal static MuteBoi instance;
-		private DiscordClient discordClient = null;
-		private EventHandler eventHandler = null;
+		// Sets up a dummy client to use for logging
+		public static DiscordClient discordClient = new DiscordClient(new DiscordConfiguration { Token = "DUMMY_TOKEN", TokenType = TokenType.Bot, MinimumLogLevel = LogLevel.Debug });
 
 		static void Main(string[] args)
 		{
-			new MuteBoi().MainAsync().GetAwaiter().GetResult();
+			MainAsync().GetAwaiter().GetResult();
 		}
 
 		public static string GetVersion()
@@ -23,14 +23,12 @@ namespace MuteBoi
 			return version?.Major + "." + version?.Minor + "." + version?.Build + (version?.Revision == 0 ? "" : "-" + (char)(64 + version?.Revision ?? 0));
 		}
 
-		private async Task MainAsync()
+		private static async Task MainAsync()
 		{
-			instance = this;
-
 			Console.WriteLine("Starting MuteBoi version " + GetVersion() + "...");
 			try
 			{
-				this.Reload();
+				Initialize();
 
 				// Block this task until the program is closed.
 				await Task.Delay(-1);
@@ -43,15 +41,8 @@ namespace MuteBoi
 			}
 		}
 
-		public async void Reload()
+		public static async void Initialize()
 		{
-			if (this.discordClient != null)
-			{
-				await this.discordClient.DisconnectAsync();
-				this.discordClient.Dispose();
-				Console.WriteLine("Discord client disconnected.");
-			}
-
 			Console.WriteLine("Loading config \"" + Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "config.yml\"");
 			Config.LoadConfig();
 
@@ -81,7 +72,7 @@ namespace MuteBoi
 			if (!Enum.TryParse(Config.logLevel, true, out LogLevel logLevel))
 			{
 				Console.WriteLine("Log level " + Config.logLevel + " invalid, using 'Info' instead.");
-				logLevel = LogLevel.Info;
+				logLevel = LogLevel.Information;
 			}
 
 			// Setting up client configuration
@@ -89,19 +80,22 @@ namespace MuteBoi
 			{
 				Token = Config.token,
 				TokenType = TokenType.Bot,
-
+				MinimumLogLevel = logLevel,
 				AutoReconnect = true,
-				LogLevel = logLevel,
-				UseInternalLogHandler = true
+				Intents = DiscordIntents.All
 			};
 
-			this.discordClient = new DiscordClient(cfg);
+			discordClient = new DiscordClient(cfg);
 
 			Console.WriteLine("Hooking events...");
-			this.eventHandler = new EventHandler(this.discordClient);
+			discordClient.Ready += EventHandler.OnReady;
+			discordClient.GuildAvailable += EventHandler.OnGuildAvailable;
+			discordClient.ClientErrored += EventHandler.OnClientError;
+			discordClient.GuildMemberAdded += EventHandler.OnGuildMemberAdded;
+			discordClient.GuildMemberRemoved += EventHandler.OnGuildMemberRemoved;
 
 			Console.WriteLine("Connecting to Discord...");
-			await this.discordClient.ConnectAsync();
+			await discordClient.ConnectAsync();
 		}
 	}
 }
