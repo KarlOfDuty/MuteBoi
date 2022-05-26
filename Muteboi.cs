@@ -25,7 +25,7 @@ namespace MuteBoi
 
 		private static async Task MainAsync()
 		{
-			Console.WriteLine("Starting MuteBoi version " + GetVersion() + "...");
+			Logger.Log(LogID.GENERAL, "Starting MuteBoi version " + GetVersion() + "...");
 			try
 			{
 				Initialize();
@@ -70,7 +70,7 @@ namespace MuteBoi
 			// Checking log level
 			if (!Enum.TryParse(Config.logLevel, true, out LogLevel logLevel))
 			{
-				Logger.Warn(LogID.GENERAL,"Log level " + Config.logLevel + " invalid, using 'Info' instead.");
+				Logger.Warn(LogID.GENERAL,"Log level " + Config.logLevel + " invalid, using 'Information' instead.");
 				logLevel = LogLevel.Information;
 			}
 
